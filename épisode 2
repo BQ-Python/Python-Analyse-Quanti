@@ -8,14 +8,14 @@ data = yf.download(ticker, start='2021-01-01', end='2023-07-25')
 
 # Créer un graphique en bougies pour visualiser les prix d'ouverture, de clôture, les hauts et les bas (journalier)
 plt.figure(figsize=(15, 8))
-plt.subplot(2, 1, 1)
+plt.subplot(2, 1, 1) # -> ceci peut etre supprimé si vous faites des graphiques individuels. Cette ligne permet seulement d'oirganiser différents graphiques si vous souhaitez en affichez plusieurs
 mpf.plot(data, type='candle', title=f'Graphique en bougies journalières pour {ticker}', style='yahoo', figscale=1.5, tight_layout=True)
 
 # Convertir les données en bougies hebdomadaires
 data_weekly = data.resample('W').agg({'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last', 'Volume': 'sum'})
 
 # Créer un graphique en bougies pour visualiser les prix d'ouverture, de clôture, les hauts et les bas (hebdomadaire)
-plt.subplot(2, 1, 2)
+plt.subplot(2, 1, 2) # -> ceci peut etre supprimé si vous faites des graphiques individuels. Cette ligne permet seulement d'oirganiser différents graphiques si vous souhaitez en affichez plusieurs
 mpf.plot(data_weekly, type='candle', title=f'Graphique en bougies hebdomadaires pour {ticker}', style='yahoo', figscale=1.5, tight_layout=True)
 
 plt.show()
