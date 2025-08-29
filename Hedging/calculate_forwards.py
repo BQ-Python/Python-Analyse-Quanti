@@ -16,7 +16,7 @@ if not all(col in df.columns for col in required_columns):
 
 # Fonction pour calculer le taux forward
 def calculate_forward_rate(spot, r_usd, r_eur, days):
-    return spot * (1 + r_usd * days / 360) / (1 + r_eur * days / 360)
+    return spot * (1 + (r_usd / 100) * days / 360) / (1 + (r_eur / 100) * days / 360)
 
 # Calcul des taux forward pour 1 mois (30 jours) et 3 mois (90 jours)
 df["Forward_1M"] = df.apply(
