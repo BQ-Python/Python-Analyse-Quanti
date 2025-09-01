@@ -1,0 +1,52 @@
+import pandas as pd
+import os
+
+# File path
+repo_path = "/Python-Analyse-Quanti/Hedging/data.xlsx"
+if not os.path.exists(repo_path):
+    raise FileNotFoundError(f"Le fichier {repo_path} n'existe pas. Vérifiez le chemin.")
+
+# Load Excel file
+df = pd.read_excel(repo_path)
+
+# Define required columns based on your original question
+required_columns = [
+    "quotationDate", 
+    "EURIBOR1M", "EURIBOR3M", "EURIBOR6M", "EURIBOR1Y",
+    "USDSOFR1M", "USDSOFR3M", "USDSOFR6M", "USDSOFR1Y",
+    "EUR/USD spot"
+]
+if not all(col in df.columns for col in required_columns):
+    raise ValueError("Colonnes manquantes dans le fichier Excel.")
+
+# Define maturities and corresponding days (Actual/360 convention)
+maturities = {
+    "1M": {"days": 30, "euribor": "EURIBOR1M", "sofr": "USDSOFR1M"},
+    "3M": {"days": 90, "euribor": "EURIBOR3M", "sofr": "USDSOFR3M"},
+    "6M": {"days": 180, "euribor": "EURIBOR6M", "sofr": "USDSOFR6M"},
+    "1Y": {"days": 360, "euribor": "EURIBOR1Y", "sofr": "USDSOFR1Y"}
+}
+
+# Function to calculate forward rate
+def calculate_forward_rate(spot, r_usd, r_eur, days):
+    return spot * (1 + (r_usd / 100) * days / 360) / (1 + (r_eur / 100) * days / 360)
+
+# Calculate forward rates for each maturity
+for maturity, info in maturities.items():
+    df[f"Forward_{maturity}"] = df.apply(
+        lambda row: calculate_forward_rate(
+            row["EUR/USD spot"], 
+            row[info["sofr"]], 
+            row[info["euribor"]], 
+            info["days"]
+        ), axis=1
+    )
+
+# Save results to a new Excel file
+output_path = "/Python-Analyse-Quanti/Hedging/data_with_forwards.xlsx"
+df.to_excel(output_path, index=False)
+
+# Display first few rows for verification
+print(f"Résultats sauvegardés dans {output_path}")
+print("\nAperçu des premières lignes :")
+print(df[["quotationDate", "EUR/USD spot", "Forward_1M", "Forward_3M", "Forward_6M", "Forward_1Y"]].head())
