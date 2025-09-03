@@ -4,7 +4,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 # Chemin du fichier
-repo_path = "/Python-Analyse-Quanti/Hedging/data.xlsx"
+repo_path = "Hedging/data.xlsx"
 if not os.path.exists(repo_path):
     raise FileNotFoundError(f"Le fichier {repo_path} n'existe pas. Vérifiez le chemin.")
 
